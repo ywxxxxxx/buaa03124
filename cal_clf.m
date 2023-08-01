@@ -8,8 +8,7 @@ function [V,LV] = cal_clf(x_state)
 
     LV1=@(x,y)2*(x-D(1));
     LV2=@(x,y)2*(y-D(2));
-    LV3=0;
     
-    LV=[LV1(x_state(1),x_state(2)),LV2(x_state(1),x_state(2)),0];
+    LV=[LV1(x_state(1),x_state(2)),LV2(x_state(1),x_state(2))];
     
 end
