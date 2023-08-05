@@ -1,5 +1,5 @@
-function [u,delta]=QP_solve(x_state,lambda,gamma,u_ref,u_lim,H)
-    %   安全性约束：-LgLfh*u ≤ Lf2h + 2hLfh + (Lfh)^2 + 2h^2*Lfh + h^4
+function [u,delta]=QP_solve(x_state,lambda,gamma,p,u_ref,u_lim,H)
+    %   安全性约束：-LgLfh*u ≤ Lf2h + (p1+p2)Lfh +p1p2 h
     %   稳定性约束：LgV1*u - delta1 ≤ -lambda*V1 -LfV1
     %              LgV2*u - delta2 ≤ -gamma*V2 -LfV2
     %   可加入u_min ≤ u ≤ u_max
@@ -11,12 +11,15 @@ function [u,delta]=QP_solve(x_state,lambda,gamma,u_ref,u_lim,H)
         x_state
         lambda
         gamma
+        p
         u_ref (:,1) = zeros(2,1)
         u_lim  (:,2) =[0,0]
         H   = eye(4)
     end
     u_dim=2;
     n_clf=2; %  CLF约束方程个数，也就是松弛变量的个数
+    p1=p(1);
+    p2=p(2);
     
     [h,Lfh,Lf2h,LgLfh] = cal_cbf(x_state);
     [V1,V2,LfV1,LgV1,LfV2,LgV2] = cal_clf(x_state);
@@ -26,10 +29,9 @@ function [u,delta]=QP_solve(x_state,lambda,gamma,u_ref,u_lim,H)
     A=[-LgLfh 0 0;
        LgV1   1 0;
        LgV2   0 1];
-    b=[Lf2h + 2*h*Lfh + Lfh^2 + 2*h^2*Lfh + h^4;
-       -lambda*V1-LfV1;
-       -gamma*V2-LfV2];
-   
+       b=[Lf2h+(p1+p2).*Lfh+p1.*p2.*h ;-lambda*V1-LfV1;-gamma*V2-LfV2];
+%     b=Lf2h+(p1+p2)*Lfh +p1*p2*h;
+%     b=[b;-lambda*V1-LfV1;-gamma*V2-LfV2];
    
     
     m=[-u_ref;0;0];
