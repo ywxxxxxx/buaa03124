@@ -28,8 +28,8 @@ function [u,delta]=QP_solve(x_state,lambda,gamma,p,Barrier,u_ref,u_lim,H)
     
     %约束条件Ax<=b的矩阵构造
     A=[-LgLfh 0 0;
-       LgV1   1 0;
-       LgV2   0 1];
+       LgV1   -1 0;
+       LgV2   0 -1];
        b=[Lf2h+(p1+p2).*Lfh+p1.*p2.*h ;-lambda*V1-LfV1;-gamma*V2-LfV2];
 %     b=Lf2h+(p1+p2)*Lfh +p1*p2*h;
 %     b=[b;-lambda*V1-LfV1;-gamma*V2-LfV2];
